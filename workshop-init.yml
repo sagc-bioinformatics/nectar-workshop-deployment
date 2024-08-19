@@ -90,23 +90,20 @@ resources:
           - su - user -c "nextflow info"
 
           # Install conda/mamba (miniforge)
-          - wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-          - bash Miniforge3-$(uname)-$(uname -m).sh -b -p /home/user/.miniforge3
-          - rm Miniforge3-$(uname)-$(uname -m).sh
-          - cd ~/.local/bin && ln -s ~/.miniforge3/bin/mamba . && ln -s ~/.miniforge3/bin/conda .
-          - mamba init && conda init && conda config --set auto_activate_base false
-          
+          - su - user -c "wget \"https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh\""
+          - su - user -c "bash Miniforge3-$(uname)-$(uname -m).sh -b -p /home/user/.miniforge3"
+          - su - user -c "rm Miniforge3-$(uname)-$(uname -m).sh"
+          - su - user -c "cd ~/.local/bin && ln -s ~/.miniforge3/bin/mamba . && ln -s ~/.miniforge3/bin/conda ."
+          - su - user -c "mamba init && conda init && conda config --set auto_activate_base false"
+
           # Create snakemake env, and link to the executable
-          - mamba create -c conda-forge -c bioconda -n snakemake snakemake
-          - cd ~/.local/bin && ln -s ~/.miniforge3/envs/snakemake/bin/snakemake .
+          - su - user -c "mamba create -c conda-forge -c bioconda -n snakemake snakemake"
+          - su - user -c "cd ~/.local/bin && ln -s ~/.miniforge3/envs/snakemake/bin/snakemake ."
 
           # Clone data
-          - git clone https://github.com/snakemake/snakemake-tutorial-data.git
-          - mv snakemake-tutorial-data/data/ .
-          - rm -rf snakemake-tutorial-data
-
-          # Reboot
-          - reboot
+          - su - user -c "git clone https://github.com/snakemake/snakemake-tutorial-data.git"
+          - su - user -c "mv snakemake-tutorial-data/data/ ."
+          - su - user -c "rm -rf snakemake-tutorial-data"
 
         final_message: "The system is now configured"
 
