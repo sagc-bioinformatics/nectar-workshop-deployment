@@ -44,7 +44,12 @@ openstack stack show workshop1
 # extract IP address
 openstack stack resource list workshop1 --format csv | grep OS::Nova::Server | cut -d, -f2 | xargs -I {} openstack server show {} -f value -c addresses
 
+# IPs, with a servergroup
+openstack stack resource show newstack server_group -f value -c physical_resource_id | xargs -I {} openstack stack resource list {} --format csv | grep OS::Nova::Server | cut -d, -f2 | xargs -I {} openstack server show {} -f value -c addresses
 
+
+
+# delete
 openstack stack delete workshop1
 
 ```
