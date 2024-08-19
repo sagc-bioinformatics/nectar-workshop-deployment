@@ -74,36 +74,7 @@ resources:
           - ca-certificates
 
         runcmd:
-
-          # Add Termuin repository
-          - wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | tee /etc/apt/trusted.gpg.d/adoptium.gpg > /dev/null
-          - echo "deb https://packages.adoptium.net/artifactory/deb noble main" | tee /etc/apt/sources.list.d/adoptium.list > /dev/null
-
-          # Update package lists
-          - apt update
-
-          # Install Termuin
-          - apt install -y temurin-21-jdk
-
-          # Install Nextflow
-          - su - user -c "mkdir -p /home/user/.local/bin && cd /home/user/.local/bin && curl -s https://get.nextflow.io | bash"
-          - su - user -c "nextflow info"
-
-          # Install conda/mamba (miniforge)
-          - su - user -c "wget \"https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh\""
-          - su - user -c "bash Miniforge3-$(uname)-$(uname -m).sh -b -p /home/user/.miniforge3"
-          - su - user -c "rm Miniforge3-$(uname)-$(uname -m).sh"
-          - su - user -c "cd ~/.local/bin && ln -s ~/.miniforge3/bin/mamba . && ln -s ~/.miniforge3/bin/conda ."
-          - su - user -c "mamba init && conda init && conda config --set auto_activate_base false"
-
-          # Create snakemake env, and link to the executable
-          - su - user -c "mamba create -c conda-forge -c bioconda -n snakemake snakemake"
-          - su - user -c "cd ~/.local/bin && ln -s ~/.miniforge3/envs/snakemake/bin/snakemake ."
-
-          # Clone data
-          - su - user -c "git clone https://github.com/snakemake/snakemake-tutorial-data.git"
-          - su - user -c "mv snakemake-tutorial-data/data/ ."
-          - su - user -c "rm -rf snakemake-tutorial-data"
+          - { get_file: setup.sh }
 
         final_message: "The system is now configured"
 
@@ -114,19 +85,10 @@ resources:
       parts:
       - config: { get_resource: cloud_config }
 
-  server_group:
-    type: OS::Heat::ResourceGroup
-    properties:
-      count: { get_param: server_count }
-      resource_def:
-        # http://docs.openstack.org/developer/heat/template_guide/openstack.html#OS::Nova::Server
-        type: OS::Nova::Server
+  server:
+    type: OS::Nova::Server
         properties:
-          name:
-            str_replace:
-              template: workshop-%index%
-              params:
-                "%index%": "%index%"
+          name: workshop-template
           key_name: { get_param: key_name }
           image: { get_param: image }
           flavor: { get_param: flavor }
