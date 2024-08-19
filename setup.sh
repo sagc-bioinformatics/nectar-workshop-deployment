@@ -8,10 +8,13 @@ apt update
 # Install Termuin
 apt install -y temurin-21-jdk
 
+# Create local bin
+su - user -c "mkdir -p ~/.local/bin"
+
 su - user -c 'bash -s' <<'EOF'
 
 # Install Nextflow
-mkdir -p /home/user/.local/bin && cd /home/user/.local/bin && curl -s https://get.nextflow.io | bash
+cd /home/user/.local/bin && curl -s https://get.nextflow.io | bash
 nextflow info
 
 # Install conda/mamba (miniforge)
@@ -22,10 +25,11 @@ cd ~/.local/bin && ln -s ~/.miniforge3/bin/mamba . && ln -s ~/.miniforge3/bin/co
 mamba init && conda init && conda config --set auto_activate_base false
 
 # Create snakemake env, and link to the executable
-mamba create -c conda-forge -c bioconda -n snakemake snakemake
+mamba create -y -c conda-forge -c bioconda -n snakemake snakemake
 cd ~/.local/bin && ln -s ~/.miniforge3/envs/snakemake/bin/snakemake .
 
 # Clone data
+cd
 git clone https://github.com/snakemake/snakemake-tutorial-data.git
 mv snakemake-tutorial-data/data/ .
 rm -rf snakemake-tutorial-data

@@ -16,7 +16,7 @@ python -m venv env
 source env/bin/activate
 
 # install requirements
-pip install python-openstack
+pip install python-openstackclient
 pip install python-heatclient
 
 # get this from the nectar gui
