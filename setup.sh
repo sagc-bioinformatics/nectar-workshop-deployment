@@ -28,10 +28,15 @@ mamba init && conda init && conda config --set auto_activate_base false
 mamba create -y -c conda-forge -c bioconda -n snakemake snakemake
 cd ~/.local/bin && ln -s ~/.miniforge3/envs/snakemake/bin/snakemake .
 
-# Clone data
+# Get data
 cd
 git clone https://github.com/snakemake/snakemake-tutorial-data.git
 mv snakemake-tutorial-data/data/ .
 rm -rf snakemake-tutorial-data
+
+# Get bash script and some conf files
+git clone https://github.com/sagc-bioinformatics/nextflow-example-workflow-2024.git
+mv nextflow-example-workflow-2024/assets bash
+rm -rf nextflow-example-workflow-2024
 
 EOF
