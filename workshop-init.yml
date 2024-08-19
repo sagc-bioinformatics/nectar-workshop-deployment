@@ -62,9 +62,8 @@ resources:
         package_update: true
         package_upgrade: true
 
-        # TODO: set this randomly somehow??
         user: user
-        password: password
+        password: { get_param: password }
         ssh_pwauth: true
         lock_passwd: false
         chpasswd: {expire: False}
@@ -86,12 +85,14 @@ resources:
           # Install Termuin
           - apt install -y temurin-21-jdk
 
-          # Install Nextflow (as the "ubuntu") user
-          - su - ubuntu -c "mkdir -p /home/ubuntu/.local/bin && cd /home/ubuntu/.local/bin && curl -s https://get.nextflow.io | bash"
-          - su - ubuntu -c "nextflow info"
+          # Install Nextflow
+          - su - user -c "mkdir -p /home/user/.local/bin && cd /home/user/.local/bin && curl -s https://get.nextflow.io | bash"
+          - su - user -c "nextflow info"
 
+          # Reboot
+          - reboot
 
-        final_message: "The system is now configured with Termuin."
+        final_message: "The system is now configured"
 
   cloud_init_user_data:
     # http://docs.openstack.org/developer/heat/template_guide/openstack.html#OS::Heat::MultipartMime
