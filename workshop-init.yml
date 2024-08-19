@@ -1,0 +1,101 @@
+#cloud-config
+heat_template_version: 2021-04-16
+
+description: >
+  A template for the Nextflow vs Snakemake 2024 workshop to run on Nectar.
+
+parameters:
+
+  server_count:
+    type: number
+    default: 3
+
+  password:
+    type: string
+    description: Password to set for the default user
+
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of an existing KeyPair to enable SSH access to the instances.
+
+  flavor:
+    type: string
+    description: The NeCTAR flavour the webserver is to run on
+    default: t3.small
+
+  image:
+    type: string
+    description: ID or name of the image to use for the instance to be created (should work with all NeCTAR images)
+    default: NeCTAR Ubuntu 24.04 LTS (Noble) amd64
+
+  availability_zone:
+    type: string
+    description: Availability Zone
+    default: monash-02
+
+
+resources:
+
+  security_group:
+    # https://docs.openstack.org/heat/latest/template_guide/openstack.html#OS::Neutron::SecurityGroup
+    type: OS::Neutron::SecurityGroup
+    properties:
+      rules:
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: icmp
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 80
+          port_range_max: 80
+
+  cloud_config:
+    # http://docs.openstack.org/developer/heat/template_guide/openstack.html#OS::Heat::CloudConfig
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+
+        user: user
+        password: { get_param: password }
+        ssh_pwauth: true
+        lock_passwd: false
+        chpasswd: {expire: False}
+
+        final_message: "The system is now configured"
+
+  cloud_init_user_data:
+    # http://docs.openstack.org/developer/heat/template_guide/openstack.html#OS::Heat::MultipartMime
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: cloud_config }
+
+  server_group:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: server_count }
+      resource_def:
+        # http://docs.openstack.org/developer/heat/template_guide/openstack.html#OS::Nova::Server
+        type: OS::Nova::Server
+        properties:
+          name:
+            str_replace:
+              template: workshop-%index%
+              params:
+                "%index%": "%index%"
+          key_name: { get_param: key_name }
+          image: { get_param: image }
+          flavor: { get_param: flavor }
+          availability_zone: { get_param: availability_zone }
+          security_groups:
+          - { get_resource: security_group }
+          networks:
+            - allocate_network: auto
+          user_data_format: RAW
+          user_data:
+            get_resource: cloud_init_user_data
+

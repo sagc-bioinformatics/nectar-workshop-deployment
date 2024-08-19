@@ -65,3 +65,9 @@ wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforg
 bash Miniforge3-$(uname)-$(uname -m).sh -b -p /home/user/.miniforge3
 
 `cd ~/.local/bin && ln -s ~/.miniforge3/bin/mamba .`
+
+# TODO
+
+- fastp uses a ton of ram - try t3.medium?
+- I should install the bash script and also the conda env required
+- config.. customize for this? 
