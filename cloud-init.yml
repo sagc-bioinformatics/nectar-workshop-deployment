@@ -1,7 +1,13 @@
-#cloud-config
+#cloud_config
 
 package_update: true
 package_upgrade: true
+
+user: user
+password: { get_param: password }
+ssh_pwauth: true
+lock_passwd: false
+chpasswd: {expire: False}
 
 packages:
   - software-properties-common
@@ -18,12 +24,24 @@ runcmd:
   - apt update
 
   # Install Termuin
-  - apt install -y termurin-21-jdk
+  - apt install -y temurin-21-jdk
 
-  # Install Nextflow (as the "ubuntu") user
-  - mkdir -p /home/ubuntu/.local/bin
-  - cd /home/ubuntu/.local/bin && curl -s https://get.nextflow.io | bash
-  - chown -R ubuntu:ubuntu /home/ubuntu/.local/bin
-  - su - ubuntu -c "nextflow info"
+  # Install Nextflow
+  - su - user -c "mkdir -p /home/user/.local/bin && cd /home/user/.local/bin && curl -s https://get.nextflow.io | bash"
+  - su - user -c "nextflow info"
 
-final_message: "The system is now configured with Termuin."
+  # Install conda/mamba (miniforge)
+  - wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+  - bash Miniforge3-$(uname)-$(uname -m).sh -b -p /home/user/.miniforge3
+  - cd ~/.local/bin && ln -s ~/.miniforge3/bin/mamba . && ln -s ~/.miniforge3/bin/conda .
+  - mamba init && conda init && conda config --set auto_activate_base false
+
+  # Create snakemake env, and link to the executable
+  - mamba create -c conda-forge -c bioconda -n snakemake snakemake
+  - cd ~/.local/bin && ln -s ~/.miniforge3/envs/snakemake/bin/snakemake .
+
+  # Reboot
+  - reboot
+
+final_message: "The system is now configured"
+

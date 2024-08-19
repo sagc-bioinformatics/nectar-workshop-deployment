@@ -52,3 +52,16 @@ openstack stack delete workshop1
 
 ```
 
+# Snapshot creation
+
+`openstack server image create myInstance --name myInstanceSnapshot`
+
+
+
+# conda
+
+wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+
+bash Miniforge3-$(uname)-$(uname -m).sh -b -p /home/user/.miniforge3
+
+`cd ~/.local/bin && ln -s ~/.miniforge3/bin/mamba .`
