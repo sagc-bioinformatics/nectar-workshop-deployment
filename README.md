@@ -59,8 +59,10 @@ openstack server image create workshop-template --name workshop-image
 
 ## Start the workshop stack
 
+The password is provided by this command. The user name is "user".
+
 ```
-openstack stack create --template workshop-init.yml \
+openstack stack create --template multi-instance.yml \
     --parameter key_name=john_workstation \
     --parameter password=mySecurePassword \
     --parameter image=workshop-image \
@@ -85,3 +87,7 @@ https://docs.openstack.org/newton/user-guide/cli-create-and-manage-stacks.html
 
 https://tutorials.rc.nectar.org.au/orchestration/04-using-the-cli
 
+
+# TODO
+
+- should use my laptop public key...

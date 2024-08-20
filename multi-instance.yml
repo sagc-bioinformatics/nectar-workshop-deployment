@@ -2,7 +2,7 @@
 heat_template_version: 2021-04-16
 
 description: >
-  A template for the Nextflow vs Snakemake 2024 workshop to run on Nectar.
+  Set up multiple instances of a particular image on Nectar.
 
 parameters:
 
