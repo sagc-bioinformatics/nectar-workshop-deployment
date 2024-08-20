@@ -15,7 +15,7 @@ parameters:
   flavor:
     type: string
     description: The NeCTAR flavour the webserver is to run on
-    default: t3.small
+    default: m3.small
 
   image:
     type: string
