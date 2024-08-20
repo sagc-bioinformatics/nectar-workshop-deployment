@@ -59,11 +59,22 @@ resources:
     properties:
       cloud_config:
 
+        package_update: true
+        package_upgrade: true
+
         user: user
         password: { get_param: password }
         ssh_pwauth: true
         lock_passwd: false
         chpasswd: {expire: False}
+        
+        packages:
+          - software-properties-common
+          - apt-transport-https
+          - ca-certificates
+
+        runcmd:
+          - echo "setting up instance"
 
         final_message: "The system is now configured"
 
