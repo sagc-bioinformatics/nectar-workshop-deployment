@@ -24,7 +24,7 @@ It will probably take a little while, but all requirements for the workshop will
 ```
 openstack stack create --template template.yml \
     --parameter key_name=john_workstation \
-    --parameter flavor=t3.medium \
+    --parameter flavor=m3.small \
     workshop-template
 ```
 
@@ -36,6 +36,17 @@ Anything you do here will be copied to the final instance, so set it up however 
 # Extract IP address of instance
 openstack stack resource list workshop-template --format csv | grep OS::Nova::Server | cut -d, -f2 | xargs -I {} openstack server show {} -f value -c addresses
 ```
+
+I'm assuming space will be at a premium, so I clean up a lot of stuff:
+```
+sudo apt remove linux-firmware
+sudo apt autoremove
+sudo apt autoclean
+sudo apt clean
+conda clean --all
+```
+
+You can also edit /etc/motd..
 
 ## Snapshot template-instance
 
@@ -53,7 +64,7 @@ openstack stack create --template workshop-init.yml \
     --parameter key_name=john_workstation \
     --parameter password=mySecurePassword \
     --parameter image=workshop-image \
-    --parameter flavor=t3.medium \
+    --parameter flavor=m3.small \
     --parameter server_count=10 \
     workshop
 ```
